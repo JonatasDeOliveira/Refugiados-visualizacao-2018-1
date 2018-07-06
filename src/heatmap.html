@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <style>
+      .axis path,
+      .axis line {
+        fill: none;
+        stroke: black;
+        shape-rendering: crispEdges;
+      }
+
+      .axis text {
+          font-family: sans-serif;
+          font-size: 11px;
+      }
+    </style>
+</head>
+<body>
+    <div class="heatmap"></div>
+
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+
+    <script src="crossfilter-master/crossfilter.min.js"></script>
+
+    <script>
+      var itemSize = 22,
+          cellSize = itemSize - 1,
+          margin = {top: 120, right: 20, bottom: 20, left: 110};
+          
+      var width = 2000 - margin.right - margin.left,
+          height = 1000 - margin.top - margin.bottom;
+
+      var formatDate = d3.timeFormat("%Y-%m-%d");
+
+      d3.csv('regions_dataset.csv', function ( response ) {
+
+        var data = response.map(function( item ) {
+            var newItem = {};
+            newItem.origin_abbr = item['origin abbreviation'];
+            newItem.dest_abbr = item['asylum abbreviation'];
+            newItem.refugees = item['Refugees (incl. refugee-like situations)'];
+            newItem.year = item['Year'];
+            newItem.dest_region = item['asylum region'];
+            newItem.origin_region = item['origin region'];
+
+            return newItem;
+        });
+
+
+        var cf = crossfilter(response);
+
+        var year_dimension = cf.dimension(function(d){
+            return d['Year'];
+        });
+
+        var origin_region_dimension = cf.dimension(function(d){
+
+            return d['origin region'];
+        });
+
+        var refugee_dimension = cf .dimension(function(d){
+            return d['Refugees (incl. refugee-like situations)'];
+        });
+
+        var year_group = year_dimension.group().all();
+        var origin_region_group = origin_region_dimension.group().all();
+        var refugee_group = refugee_dimension.group().all();
+
+        var new_data = [];
+
+
+        year_group.forEach(function(year){
+            origin_region_group.forEach(function(region){
+
+                var helper = origin_region_dimension.filterFunction(function(d){
+                    return d == region.key;
+                });
+
+                var aux = helper.top(10000000);
+                var sum = 0;
+                aux.forEach(function(d){
+                    if(d['Year'] == year.key){
+                        sum += parseFloat(d['Refugees (incl. refugee-like situations)']);
+                    }
+                });
+                new_data.push({'year': year.key, 'origin_region': region.key, 'refugees': sum});
+            });
+        });
+
+
+        var x_elements = d3.set(new_data.map(function( item ) { return item.year; } )).values(),
+            y_elements = d3.set(new_data.map(function( item ) { return item.origin_region; } )).values();
+
+
+        var xScale = d3.scaleBand()
+            .domain(x_elements)
+            .range([0, x_elements.length * itemSize]);
+
+        var xAxis = d3.axisTop()
+             .scale(xScale)
+            .tickFormat(function (d) {
+                return d;
+            });
+
+        var yScale = d3.scaleBand()
+            .domain(y_elements)
+            .range([0, y_elements.length * itemSize]);
+
+        var yAxis = d3.axisLeft()
+            .scale(yScale)
+            .tickFormat(function (d) {
+                return d;
+            });
+
+        var min = d3.min(new_data, function(item){
+                return item.refugees;
+            });
+        var max = d3.max(new_data, function(item){
+                return item.refugees;
+            });
+        console.log(min);
+        console.log(max);
+
+        var colors1 = ['#fef0d9','#fdd49e','#fdbb84','#fc8d59','#e34a33','#b30000'];
+        var colorScale = d3.scaleQuantize()
+        .range(colors1)
+        .domain([min,max]);
+
+        /*var colorScale = d3.scale.threshold()
+            .domain([min, max])
+            .range(['#fef0d9','#fdcc8a','#fc8d59','#e34a33','#b30000']);*/
+
+        console.log(colorScale(100));
+        console.log(colorScale(200));
+        console.log(colorScale(6894452));
+
+        var svg = d3.select('.heatmap')
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        var cells = svg.selectAll('rect')
+            .data(new_data)
+            .enter().append('g').append('rect')
+            .attr('class', 'cell')
+            .attr('width', cellSize)
+            .attr('height', cellSize)
+            .attr('y', function(d) { return yScale(d.origin_region); })
+            .attr('x', function(d) { return xScale(d.year); })
+            .attr('fill', function(d) {
+                if (d.refugees == 0){
+                    return 'white';
+                }
+                return colorScale(d.refugees);
+            });
+
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+            .selectAll('text')
+            .attr('font-weight', 'normal');
+
+        svg.append("g")
+            .attr("class", "x axis")
+            .call(xAxis)
+            .selectAll('text')
+            .attr('font-weight', 'normal')
+            .style("text-anchor", "start")
+            .attr("dx", ".8em")
+            .attr("dy", ".5em")
+            .attr("transform", function (d) {
+                return "rotate(-65)";
+            });
+      });
+    </script>
+</body>
+
+
