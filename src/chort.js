@@ -1,11 +1,13 @@
 // Configuration parameters.
-var width = 960,
-  height = 960,
+var cond = true;
+var groupIndex = 1;
+var width = 650,
+  height = 650,
   outerPadding = 150,
   labelPadding = 5,
   chordPadding = 0.03,
   arcThickness = 30,
-  opacity = 0.5,
+  opacity = 1,
   fadedOpacity = 0.01,
   transitionDuration = 300,
   outerRadius = width / 2 - outerPadding,
@@ -13,7 +15,7 @@ var width = 960,
   valueFormat = d3.format(",");
 
 // DOM Elements.
-var svg = d3.select("body").append("svg")
+var svg = d3.select("#chort").append("svg")
     .attr("width", width)
     .attr("height", height)
   g = svg.append("g")
@@ -62,19 +64,23 @@ ribbonsG.selectAll("path")
     })
     .style("opacity", opacity)
     .on("mouseenter", function(d){
-      var src = matrix.names[d.source.index];
-      var dest = matrix.names[d.target.index];
-      popoverOptions.content = [
-        "<strong>" + src +" to " + dest +"</strong>",
-        valueFormat(d.target.value),
-        "<br><strong>" + dest +" to " + src +"</strong>",
-        valueFormat(d.source.value)
-      ].join("<br>");
-      $(this).popover(popoverOptions);
-      $(this).popover("show");
+		if(groupIndex==d.source.index||groupIndex==d.target.index||cond) {
+		  var src = matrix.names[d.source.index];
+		  var dest = matrix.names[d.target.index];
+		  popoverOptions.content = [
+			"<strong>" + src +" to " + dest +"</strong>",
+			valueFormat(d.target.value),
+			"<br><strong>" + dest +" to " + src +"</strong>",
+			valueFormat(d.source.value)
+		  ].join("<br>");
+		  $(this).popover(popoverOptions);
+		  $(this).popover("show");
+		}
     }) 
     .on("mouseleave", function (d){
-      $(this).popover("hide");
+		if(groupIndex==d.source.index||groupIndex==d.target.index||cond) {
+			$(this).popover("hide");
+		}
     })
 
 
@@ -122,30 +128,36 @@ groups
     })
     .attr("alignment-baseline", "central")
     .style("font-family", '"Helvetica Neue", Helvetica')
-    .style("font-size", "10pt")
+    .style("font-size", "7pt")
     .style("cursor", "default")
     .call(groupHover);
 }
 
 // Sets up hover interaction to highlight a chord group.
 // Used for both the arcs and the text labels.
+
+
 function groupHover(selection){
 selection
-  .on("mouseover", function (group){
-    g.selectAll(".ribbon")
-        .filter(function(ribbon) {
-          return (
-            (ribbon.source.index !== group.index) &&
-            (ribbon.target.index !== group.index)
-          );
-        })
-      .transition().duration(transitionDuration)
-        .style("opacity", fadedOpacity);
-  })
-  .on("mouseout", function (){
-    g.selectAll(".ribbon")
-      .transition().duration(transitionDuration)
-        .style("opacity", opacity);
+  .on("click", function (group){
+    if(cond) {
+        cond = false;
+        g.selectAll(".ribbon")
+            .filter(function(ribbon) {
+              return (
+                (ribbon.source.index !== group.index) &&
+                (ribbon.target.index !== group.index)
+              );
+            })
+          .transition().duration(transitionDuration)
+            .style("opacity", fadedOpacity);
+			groupIndex = group.index;
+    } else {
+        cond = true;
+        g.selectAll(".ribbon")
+          .transition().duration(transitionDuration)
+            .style("opacity", opacity);
+    }
   });
 }
 
@@ -181,7 +193,11 @@ for(i = 0; i < n; i++){
 data.forEach(function (d){
   i = nameToIndex[d["origin region"]];
   j = nameToIndex[d["asylum region"]];
-  matrix[j][i] = parseFloat(d["Refugees (incl. refugee-like situations)"]);
+  if(d["Year"]=="1996") {
+    matrix[j][i] += parseFloat(d["Refugees (incl. refugee-like situations)"]);
+  } else {
+    matrix[j][i] += 0.0;
+  }
 });
 
 matrix.names = names;
