@@ -30,6 +30,7 @@ class Chort {
 	}
 	
 	setYear(year) {
+		this.cond = true;
 		this.year = year;
 		
 		var ribbon = d3.ribbon()
@@ -97,11 +98,12 @@ class Chort {
 			
 		groups.exit().remove();
 		
-		groups.enter().append("g");
-
+		groups.enter().append("g").merge(groups);
+		
+		groups.selectAll("path").remove();	
+		
 		groups
 		  .append("path")
-		  	.merge(groups)
 			.attr("class", "arc")
 			.attr("d", arc)
 			.style("fill", function(group) {
@@ -115,6 +117,9 @@ class Chort {
 
 		var angle = d3.local(),
 			flip = d3.local();
+			
+		groups.selectAll("text").remove();	
+		
 		groups
 		  .append("text")
 			.each(function(d) {
@@ -156,7 +161,7 @@ class Chort {
 				    })
 				  .transition().duration(chort.transitionDuration)
 				    .style("opacity", chort.fadedOpacity);
-					this.groupIndex = group.index;
+					chort.groupIndex = group.index;
 			} else {
 				chort.cond = true;
 				chort.g.selectAll(".ribbon")

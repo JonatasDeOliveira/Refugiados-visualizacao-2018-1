@@ -1,8 +1,8 @@
 class HeatMap{
 	constructor(container){
 		this.container = container;
-		this.itemSize = 22;
-        this.cellSize = itemSize - 1;
+		this.itemSize = 19;
+        this.cellSize = this.itemSize - 1;
         this.margin = {top: 0, right: 20, bottom: 20, left: 110};
           
     	this.width = 2000 - this.margin.right - this.margin.left;
@@ -120,10 +120,14 @@ class HeatMap{
 
 	setXAxis(columnName){
 		var elements = d3.set(this.currData.map(function( item ) { return item[columnName]; } )).values().sort();
+		elements = [];
+		for(var i=1961;i<=2017;i++) {
+			elements.push((i+""));
+		}
 		this.rowLength = elements.length;
 		this.xScale = d3.scaleBand()
             .domain(elements)
-            .range([0, elements.length * itemSize]);
+            .range([0, elements.length * this.itemSize]);
 
         this.xAxis = d3.axisTop()
              .scale(this.xScale)
@@ -137,7 +141,7 @@ class HeatMap{
 		
 		this.leftYScale = d3.scaleBand()
             .domain(elements)
-            .range([0, this.columnLength * itemSize]);
+            .range([0, this.columnLength * this.itemSize]);
             
             console.log(elements);
 
@@ -151,7 +155,7 @@ class HeatMap{
 		this.columnLength = elements.length;
 		this.rightYScale = d3.scaleBand()
             .domain(elements)
-            .range([0, elements.length * itemSize]);
+            .range([0, elements.length * this.itemSize]);
 
 
         this.rightYAxis = d3.axisRight()
