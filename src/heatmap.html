@@ -20,7 +20,9 @@
 
     <script src="https://d3js.org/d3.v4.min.js"></script>
 
-    <script src="crossfilter-master/crossfilter.min.js"></script>
+    <script src="crossfilter.min.js"></script>
+
+    <script src="heatmap.js"></script>
 
     <script>
       var itemSize = 22,
@@ -46,10 +48,42 @@
             return newItem;
         });
 
+        var countries_abbr = d3.set(data.map(function( item ) { return item.dest_abbr; } )).values();
+
 
         var cf = crossfilter(response);
 
-        var year_dimension = cf.dimension(function(d){
+        var origin_abbr_dimension = cf.dimension(function(d){
+            return d['origin abbreviation'];
+        });
+
+        var br_data = origin_abbr_dimension.filterFunction(function(d){
+            return d == 'BR';
+        });
+
+        var new_data = br_data.top(1000000);
+
+        var svg = d3.select('.heatmap')
+            .append("svg");
+
+        var heatmap = new HeatMap(svg);
+
+        var colors1 = ['#fef0d9','#fdd49e','#fdbb84','#fc8d59','#e34a33','#b30000'];
+        heatmap.setData(new_data);
+        heatmap.updateHeatMap('Year', 'Origin', 'Country / territory of asylum/residence', colors1, 'Refugees (incl. refugee-like situations)');
+
+        var us_data = origin_abbr_dimension.filterFunction(function(d){
+            return d == 'US';
+        });
+
+        /*new_data = us_data.top(1000000);
+
+        heatmap.setData(new_data);
+        heatmap.updateHeatMap('Year', 'Origin', 'Country / territory of asylum/residence', colors1, 'Refugees (incl. refugee-like situations)');
+
+        //tentativa de plotar heatmap por região
+
+        /*var year_dimension = cf.dimension(function(d){
             return d['Year'];
         });
 
@@ -85,12 +119,16 @@
                 });
                 new_data.push({'year': year.key, 'origin_region': region.key, 'refugees': sum});
             });
-        });
+        });*/
 
 
-        var x_elements = d3.set(new_data.map(function( item ) { return item.year; } )).values(),
-            y_elements = d3.set(new_data.map(function( item ) { return item.origin_region; } )).values();
+        /*var x_elements = d3.set(new_data.map(function( item ) { return item['Year']; } )).values().sort(),
+            y_elements = d3.set(new_data.map(function( item ) { return item['Country / territory of asylum/residence']; } )).values(),
+            y0_elements = [];
 
+        for(var i = 0;i<y_elements.length;i++){
+            y0_elements.push('Brazil');
+        }
 
         var xScale = d3.scaleBand()
             .domain(x_elements)
@@ -106,33 +144,34 @@
             .domain(y_elements)
             .range([0, y_elements.length * itemSize]);
 
-        var yAxis = d3.axisLeft()
+        var yAxis = d3.axisRight()
             .scale(yScale)
             .tickFormat(function (d) {
                 return d;
             });
 
+        var y0Scale = d3.scaleBand()
+            .domain(y0_elements)
+            .range([0, y0_elements.length * itemSize]);
+
+        var y0Axis = d3.axisLeft()
+            .scale(y0Scale)
+            .tickFormat(function (d) {
+                return d;
+            });
+
         var min = d3.min(new_data, function(item){
-                return item.refugees;
+                return item['Refugees (incl. refugee-like situations)'];
             });
         var max = d3.max(new_data, function(item){
-                return item.refugees;
+                return item['Refugees (incl. refugee-like situations)'];
             });
-        console.log(min);
-        console.log(max);
 
         var colors1 = ['#fef0d9','#fdd49e','#fdbb84','#fc8d59','#e34a33','#b30000'];
         var colorScale = d3.scaleQuantize()
         .range(colors1)
         .domain([min,max]);
 
-        /*var colorScale = d3.scale.threshold()
-            .domain([min, max])
-            .range(['#fef0d9','#fdcc8a','#fc8d59','#e34a33','#b30000']);*/
-
-        console.log(colorScale(100));
-        console.log(colorScale(200));
-        console.log(colorScale(6894452));
 
         var svg = d3.select('.heatmap')
             .append("svg")
@@ -147,18 +186,26 @@
             .attr('class', 'cell')
             .attr('width', cellSize)
             .attr('height', cellSize)
-            .attr('y', function(d) { return yScale(d.origin_region); })
-            .attr('x', function(d) { return xScale(d.year); })
+            .attr('y', function(d) { return yScale(d['Country / territory of asylum/residence']); })
+            .attr('x', function(d) { return xScale(d['Year']); })
             .attr('fill', function(d) {
-                if (d.refugees == 0){
+                if (d['Refugees (incl. refugee-like situations)'] == 0){
                     return 'white';
                 }
-                return colorScale(d.refugees);
+                return colorScale(d['Refugees (incl. refugee-like situations)']);
             });
+        console.log(yAxis);
 
         svg.append("g")
             .attr("class", "y axis")
+            .attr("transform", "translate(" + ((y_elements.length * itemSize)) + "," + 0 + ")")
             .call(yAxis)
+            .selectAll('text')
+            .attr('font-weight', 'normal');
+
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(y0Axis)
             .selectAll('text')
             .attr('font-weight', 'normal');
 
@@ -172,7 +219,7 @@
             .attr("dy", ".5em")
             .attr("transform", function (d) {
                 return "rotate(-65)";
-            });
+            });*/
       });
     </script>
 </body>
