@@ -48,7 +48,7 @@
 
       var formatDate = d3.timeFormat("%Y-%m-%d");
 
-      d3.csv('regions_dataset.csv', function ( response ) {
+      d3.csv('datasets/regions_dataset.csv', function ( response ) {
 
         var data = response.map(function( item ) {
             var newItem = {};
@@ -107,6 +107,8 @@
             return d['origin region'];
         });
 
+        console.log(origin_region_dimension.group().all());
+
         var refugee_dimension = cf .dimension(function(d){
             return d['Refugees (incl. refugee-like situations)'];
         });
@@ -136,7 +138,7 @@
             });
         });
 		heatmap.setData(new_data);
-		heatmap.updateHeatMap('Year', 'origin_region',)
+		heatmap.updateHeatMap('Year', 'origin_region','origin_region', colors1, 'refugees');
 
         /*var x_elements = d3.set(new_data.map(function( item ) { return item['Year']; } )).values().sort(),
             y_elements = d3.set(new_data.map(function( item ) { return item['Country / territory of asylum/residence']; } )).values(),

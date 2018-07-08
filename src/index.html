@@ -132,12 +132,12 @@
           cellSize = itemSize - 1,
           margin = {top: 120, right: 20, bottom: 20, left: 110};
           
-      var width = 2000 - margin.right - margin.left,
+        var width = 2000 - margin.right - margin.left,
           height = 1000 - margin.top - margin.bottom;
 
-      var formatDate = d3.timeFormat("%Y-%m-%d");
+        var formatDate = d3.timeFormat("%Y-%m-%d");
 
-      d3.csv('regions_dataset.csv', function ( response ) {
+      d3.csv('datasets/regions_dataset.csv', function ( response ) {
 
         var data = response.map(function( item ) {
             var newItem = {};
