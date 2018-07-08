@@ -11,7 +11,13 @@
 
   </head>
   <body>
+  <div id="chort" style="width: 700px; height: 700px; float: left;"></div>
     <script src="chort.js"></script>
+    <script>
+    	var container = d3.select('#chort');
+    	var chort = new Chort(container, "1961");
+    	chort.setYear("2008");
+    </script>
   </body>
 </html>
 
