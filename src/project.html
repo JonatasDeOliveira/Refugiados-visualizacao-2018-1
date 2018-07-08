@@ -44,6 +44,11 @@
 	<div id="chort" style="width: 650px; height: 650px; float: left;"></div>
 	<script src="project.js"></script>
 	<script src="chort.js"></script>
+	<script>
+    	var container = d3.select('#chort');
+    	var chort = new Chort(container, "2008");
+    	chort.setYear("2008");
+    </script>
 </body>
 </html>
 

@@ -4,7 +4,7 @@ if (L.Browser.mobile) {
 } else {
   map.setView([0, 0], 2);
 }
-L.esri.basemapLayer('DarkGray').addTo(map);
+L.esri.basemapLayer('Topographic').addTo(map);
 Papa.parse('regions_dataset.csv', {
   download: true,
   header: true,
