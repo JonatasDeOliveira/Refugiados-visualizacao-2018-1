@@ -99,7 +99,7 @@
             weight: 1,
             color: 'rgb(195, 255, 62)',
             fillColor: 'rgba(195, 255, 62, 0.6)',
-            fillOpacity: 0.6
+            fillOpacity: 0.7
           };
         } else {
           return {
@@ -108,7 +108,7 @@
             weight: 0.25,
             color: 'rgb(17, 142, 170)',
             fillColor: 'rgb(17, 142, 170)',
-            fillOpacity: 0.7
+		fillOpacity: 0.7
           };
         }
       }
@@ -410,8 +410,9 @@
 
       var originUniqueIdField = this.options.originAndDestinationFieldIds.originUniqueIdField;
       var destinationUniqueIdField = this.options.originAndDestinationFieldIds.destinationUniqueIdField;
-
-      geoJsonFeatureCollection.features.forEach(function(feature) {
+	
+	
+      /*geoJsonFeatureCollection.features.forEach(function(feature) {
         var isOrigin = feature.properties.isOrigin;
 
         if (isOrigin && originUniqueIdValues.indexOf(feature.properties[originUniqueIdField]) === -1) {
@@ -424,7 +425,23 @@
           // do not attempt to draw an origin or destination circle on the canvas if it is already in one of the tracking arrays
           return;
         }
-      });
+      });*/
+      
+      for(var i = geoJsonFeatureCollection.features.length-1;i>=0;i--) {
+	  var feature = geoJsonFeatureCollection.features[i];
+	  var isOrigin = feature.properties.isOrigin;
+	  
+	  if (isOrigin && originUniqueIdValues.indexOf(feature.properties[originUniqueIdField]) === -1) {
+          originUniqueIdValues.push(feature.properties[originUniqueIdField]);
+          newGeoJson.features.push(feature);
+        } else if (!isOrigin && destinationUniqueIdValues.indexOf(feature.properties[destinationUniqueIdField]) === -1) {
+          destinationUniqueIdValues.push(feature.properties[destinationUniqueIdField]);
+          newGeoJson.features.push(feature);
+        } else {
+          // do not attempt to draw an origin or destination circle on the canvas if it is already in one of the tracking arrays
+          //return;
+        }
+      }
 
       return newGeoJson;
     },

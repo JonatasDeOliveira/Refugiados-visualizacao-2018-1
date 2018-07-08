@@ -26,6 +26,7 @@ Papa.parse('regions_dataset.csv', {
         }
       })
     };
+    console.log(geoJsonFeatureCollection);
     var oneToManyFlowmapLayer = L.canvasFlowmapLayer(geoJsonFeatureCollection, {
       originAndDestinationFieldIds: {
         originUniqueIdField: 'origin abbreviation',
@@ -50,13 +51,13 @@ Papa.parse('regions_dataset.csv', {
     // and then call the "selectFeaturesForPathDisplay()" method to inform the layer
     // which Bezier paths need to be drawn
     oneToManyFlowmapLayer.on('click', function(e) {
-        console.log(e.sharedOriginFeatures[0].properties['Year']);
+        //console.log(e.sharedOriginFeatures[0].properties['Year']);
       if (e.sharedOriginFeatures.length) {
         oneToManyFlowmapLayer.selectFeaturesForPathDisplay(e.sharedOriginFeatures, 'SELECTION_NEW');
       }
-      if (e.sharedDestinationFeatures.length) {
+      /*if (e.sharedDestinationFeatures.length) {
         oneToManyFlowmapLayer.selectFeaturesForPathDisplay(e.sharedDestinationFeatures, 'SELECTION_NEW');
-      }
+      }*/
     });
     // immediately select an origin point for Bezier path display,
     // instead of waiting for the first user click event to fire
