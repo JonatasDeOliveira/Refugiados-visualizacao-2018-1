@@ -1,4 +1,4 @@
-class Chort {
+class Chord {
 	
 	constructor(container, year) {
 		this.year = year;
@@ -73,22 +73,32 @@ class Chort {
 			.style("opacity", chort.opacity)
 			.on("mouseenter", function(d){
 				if(chort.groupIndex==d.source.index||chort.groupIndex==d.target.index||chort.cond) {
+				   
 				  var src = matrix.names[d.source.index];
-				  var dest = matrix.names[d.target.index];
+				  var dest = matrix.names[d.target.index];/*
 				  popoverOptions.content = [
-					"<strong>" + src +" to " + dest +"</strong>",
+					"<strong>" + src +" to " + dest + " in " + chort.year + "</strong>",
 					chort.valueFormat(d.target.value),
-					"<br><strong>" + dest +" to " + src +"</strong>",
+					"<br><strong>" + dest +" to " + src + " in " + chort.year +"</strong>",
 					chort.valueFormat(d.source.value)
 				  ].join("<br>");
+				  //$(this).attr('data-content',popoverOptions.content);
 				  $(this).popover(popoverOptions);
 				  $(this).popover("show");
-				}
+				}*/
+				$(this).attr('data-html',true);
+                $(this).attr('data-content',[
+					"<strong>" + src +" to " + dest + " in " + chort.year + "</strong>",
+					chort.valueFormat(d.target.value),
+					"<br><strong>" + dest +" to " + src + " in " + chort.year +"</strong>",
+					chort.valueFormat(d.source.value)
+				  ].join("<br>"));
+                $(this).popover('show');
+                }
 			}) 
 			.on("mouseleave", function (d){
-				if(chort.groupIndex==d.source.index||chort.groupIndex==d.target.index||chort.cond) {
-					$(this).popover("hide");
-				}
+			    $(this).popover("hide");
+
 			})
 
 
@@ -232,11 +242,11 @@ class Chort {
 		  }
 		});
 		
-		function getLink(origin, destination){
-		  var key = origin + "|" + destination;
+		function getLink(origin, asylum){
+		  var key = origin + "|" + asylum;
 		  return (key in links) ? links[key] : (links[key] = {
 			origin: origin,
-			destination: destination,
+			asylum: asylum,
 			count: 0
 		  });
 		}
@@ -244,8 +254,6 @@ class Chort {
 		data.forEach(function (d){
 		  getLink(parent[d["origin region"]], parent[d["asylum region"]]).count += parseFloat(d["Refugees (incl. refugee-like situations)"]);
 
-		  //console.log(d.origin + " is in " + parent[d.origin]);
-		  //console.log(d.destination + " is in " + parent[d.destination]);
 		});
 
 		return Object.keys(links).map(function (key){
