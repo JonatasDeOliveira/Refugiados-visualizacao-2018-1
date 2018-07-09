@@ -232,11 +232,11 @@ class Chort {
 		  }
 		});
 		
-		function getLink(origin, destination){
-		  var key = origin + "|" + destination;
+		function getLink(origin, asylum){
+		  var key = origin + "|" + asylum;
 		  return (key in links) ? links[key] : (links[key] = {
 			origin: origin,
-			destination: destination,
+			asylum: asylum,
 			count: 0
 		  });
 		}
@@ -244,8 +244,6 @@ class Chort {
 		data.forEach(function (d){
 		  getLink(parent[d["origin region"]], parent[d["asylum region"]]).count += parseFloat(d["Refugees (incl. refugee-like situations)"]);
 
-		  //console.log(d.origin + " is in " + parent[d.origin]);
-		  //console.log(d.destination + " is in " + parent[d.destination]);
 		});
 
 		return Object.keys(links).map(function (key){

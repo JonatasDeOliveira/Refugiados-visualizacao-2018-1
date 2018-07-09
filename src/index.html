@@ -120,14 +120,12 @@
 		var container = d3.select('#chort');
     	var chort = new Chort(container, slider.value+"");
     	chort.setYear(slider.value+"");
+		
+		var map = new Map(slider.value);
     	
 		slider.oninput = function() {
 		  output.innerHTML = this.value;
 		}
-    	
-		window.setInterval(function(){
-		  	if(chort.year!= (slider.value+""))chort.setYear(slider.value+"");
-		}, 1001);
     	
     	var itemSize = 22,
           cellSize = itemSize - 1,
@@ -165,7 +163,7 @@
             return d == 'SY';
         });
 
-        var new_data = br_data.top(1000000);
+        var new_data = br_data.top(Infinity);
 
         var svg = d3.select('.heatmap')
             .append("svg");
@@ -176,9 +174,22 @@
         heatmap.setData(new_data);
         heatmap.updateHeatMap('Year', 'Origin', 'Country / territory of asylum/residence', colors1, 'Refugees (incl. refugee-like situations)');
 
-        var us_data = origin_abbr_dimension.filterFunction(function(d){
-            return d == 'US';
-        });
+        var all_data;
+		var origin = 'SY';
+		
+		window.setInterval(function(){
+		  	if(chort.year!= (slider.value+""))chort.setYear(slider.value+"");
+			if(map.year!= (slider.value+"")) map.setYear(slider.value+"");
+			if(!(map.origin=='!'||map.origin==origin)) {
+				origin = map.origin;
+				all_data = origin_abbr_dimension.filterFunction(function(d){
+					return d == origin;
+				});
+				new_data = all_data.top(Infinity);
+				heatmap.setData(new_data);
+				heatmap.updateHeatMap('Year', 'Origin', 'Country / territory of asylum/residence', colors1, 'Refugees (incl. refugee-like situations)');
+			}
+		}, 1001);
 
         /*new_data = us_data.top(1000000);
 
