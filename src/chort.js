@@ -86,9 +86,7 @@ class Chort {
 				}
 			}) 
 			.on("mouseleave", function (d){
-				if(chort.groupIndex==d.source.index||chort.groupIndex==d.target.index||chort.cond) {
-					$(this).popover("hide");
-				}
+				$(this).popover("hide");
 			})
 
 
