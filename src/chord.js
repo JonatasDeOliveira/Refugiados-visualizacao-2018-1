@@ -11,14 +11,15 @@ class Chord {
 		this.labelPadding = 5;
 		this.chordPadding = 0.03;
 		this.arcThickness = 30;
+		this.lastClicked = false;
 		this.opacity = 1;
 		this.fadedOpacity = 0.1;
 		this.transitionDuration = 300;
 		this.outerRadius = this.width / 2 - this.outerPadding;
 		this.innerRadius = this.outerRadius - this.arcThickness;
 		this.valueFormat = d3.format(",");
-
-
+        this.origin = "!";
+        this.mat = null;
 		this.svg = container.append("svg")
 			.attr("width", this.width)
 			.attr("height", this.height);
@@ -53,6 +54,7 @@ class Chord {
 
 		var matrix = generateMatrix(data),
 			chords = chord(matrix);
+		chort.mat = matrix;
 
 		color.domain(matrix.map(function (d, i){
 		  return i;
@@ -75,25 +77,15 @@ class Chord {
 				if(chort.groupIndex==d.source.index||chort.groupIndex==d.target.index||chort.cond) {
 				   
 				  var src = matrix.names[d.source.index];
-				  var dest = matrix.names[d.target.index];/*
-				  popoverOptions.content = [
-					"<strong>" + src +" to " + dest + " in " + chort.year + "</strong>",
-					chort.valueFormat(d.target.value),
-					"<br><strong>" + dest +" to " + src + " in " + chort.year +"</strong>",
-					chort.valueFormat(d.source.value)
-				  ].join("<br>");
-				  //$(this).attr('data-content',popoverOptions.content);
-				  $(this).popover(popoverOptions);
-				  $(this).popover("show");
-				}*/
-				$(this).attr('data-html',true);
-                $(this).attr('data-content',[
-					"<strong>" + src +" to " + dest + " in " + chort.year + "</strong>",
-					chort.valueFormat(d.target.value),
-					"<br><strong>" + dest +" to " + src + " in " + chort.year +"</strong>",
-					chort.valueFormat(d.source.value)
-				  ].join("<br>"));
-                $(this).popover('show');
+				  var dest = matrix.names[d.target.index];
+				    $(this).attr('data-html',true);
+                    $(this).attr('data-content',[
+					    "<strong>" + src +" to " + dest + " in " + chort.year + "</strong>",
+					    chort.valueFormat(d.target.value),
+					    "<br><strong>" + dest +" to " + src + " in " + chort.year +"</strong>",
+					    chort.valueFormat(d.source.value)
+				      ].join("<br>"));
+                    $(this).popover('show');
                 }
 			}) 
 			.on("mouseleave", function (d){
@@ -161,6 +153,7 @@ class Chord {
 		selection
 		  .on("click", function (group){
 			if(chort.cond) {
+			    chort.lastClicked = true;
 				chort.cond = false;
 				chort.g.selectAll(".ribbon")
 				    .filter(function(ribbon) {
@@ -172,6 +165,7 @@ class Chord {
 				  .transition().duration(chort.transitionDuration)
 				    .style("opacity", chort.fadedOpacity);
 					chort.groupIndex = group.index;
+					chort.origin = chort.mat.names[group.index];
 			} else {
 				chort.cond = true;
 				chort.g.selectAll(".ribbon")

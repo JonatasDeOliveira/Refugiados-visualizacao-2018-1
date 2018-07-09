@@ -2,6 +2,7 @@ class Map {
 	constructor(year) {
 		this.year = year;
 		this.origin = "!";
+		this.lastClicked = true;
 		this.map = L.map('map');
 		if (L.Browser.mobile) {
 		  this.map.setView([15, -21.95], 2);
@@ -67,6 +68,7 @@ class Map {
 			// which Bezier paths need to be drawn
 			oneToManyFlowmapLayer.on('click', function(e) {
 				m.origin = e.sharedOriginFeatures[0].properties['origin abbreviation'];
+				m.lastClicked = true;
 			  if (e.sharedOriginFeatures.length) {
 				oneToManyFlowmapLayer.selectFeaturesForPathDisplay(e.sharedOriginFeatures, 'SELECTION_NEW');
 			  }
