@@ -5,7 +5,7 @@ if (L.Browser.mobile) {
   map.setView([0, 0], 2);
 }
 L.esri.basemapLayer('Topographic').addTo(map);
-Papa.parse('regions_dataset.csv', {
+Papa.parse('datasets/regions_dataset.csv', {
   download: true,
   header: true,
   dynamicTyping: true,

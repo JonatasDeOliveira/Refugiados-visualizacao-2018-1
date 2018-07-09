@@ -211,7 +211,7 @@ class Chort {
 		return matrix;
 		}
 
-		d3.csv("regions_dataset.csv", type, function (dataForCountries){console.log(dataForCountries);
+		d3.csv("datasets/regions_dataset.csv", type, function (dataForCountries){console.log(dataForCountries);
 			render(dataForCountries);
 		});
 

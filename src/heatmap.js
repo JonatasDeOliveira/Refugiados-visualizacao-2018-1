@@ -35,6 +35,7 @@ class HeatMap{
         this.leftYScale = undefined;
         this.rightYScale = undefined;
         this.xScale = undefined;
+        this.rightIds = undefined;
         this.rowLength = 0;
         this.columnLength = 0;
 
@@ -121,7 +122,7 @@ class HeatMap{
 	setXAxis(columnName){
 		var elements = d3.set(this.currData.map(function( item ) { return item[columnName]; } )).values().sort();
 		elements = [];
-		for(var i=1961;i<=2017;i++) {
+		for(var i=1960;i<=2017;i++) {
 			elements.push((i+""));
 		}
 		this.rowLength = elements.length;
@@ -140,18 +141,20 @@ class HeatMap{
 		var elements = d3.set(this.currData.map(function( item ) { return item[columnName]; } )).values().sort();
 		
 		this.leftYScale = d3.scaleBand()
-            .domain(elements)
+            .domain(this.rightIds)
             .range([0, this.columnLength * this.itemSize]);
             
             console.log(elements);
 
         this.leftYAxis = d3.axisLeft()
             .scale(this.leftYScale)
-            .ticks(elements);
+            .tickFormat(function(d){
+            	return elements[0];
+            });
 	}
 
 	setRightYAxis(columnName){
-		var elements = d3.set(this.currData.map(function( item ) { return item[columnName]; } )).values().sort();
+		var elements = this.rightIds = d3.set(this.currData.map(function( item ) { return item[columnName]; } )).values().sort();
 		this.columnLength = elements.length;
 		this.rightYScale = d3.scaleBand()
             .domain(elements)
