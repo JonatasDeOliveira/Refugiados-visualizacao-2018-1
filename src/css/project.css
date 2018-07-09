@@ -69,7 +69,7 @@ footer p {
       }
       .scroll {
         height: 500px;
-        width: 110%;
+        width: 100%;
         overflow-x: hidden;
         overflow-y: hidden; 
             margin-bottom: 50px;
