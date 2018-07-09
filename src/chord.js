@@ -1,4 +1,4 @@
-class Chort {
+class Chord {
 	
 	constructor(container, year) {
 		this.year = year;
@@ -73,20 +73,32 @@ class Chort {
 			.style("opacity", chort.opacity)
 			.on("mouseenter", function(d){
 				if(chort.groupIndex==d.source.index||chort.groupIndex==d.target.index||chort.cond) {
+				   
 				  var src = matrix.names[d.source.index];
-				  var dest = matrix.names[d.target.index];
+				  var dest = matrix.names[d.target.index];/*
 				  popoverOptions.content = [
-					"<strong>" + src +" to " + dest +"</strong>",
+					"<strong>" + src +" to " + dest + " in " + chort.year + "</strong>",
 					chort.valueFormat(d.target.value),
-					"<br><strong>" + dest +" to " + src +"</strong>",
+					"<br><strong>" + dest +" to " + src + " in " + chort.year +"</strong>",
 					chort.valueFormat(d.source.value)
 				  ].join("<br>");
+				  //$(this).attr('data-content',popoverOptions.content);
 				  $(this).popover(popoverOptions);
 				  $(this).popover("show");
-				}
+				}*/
+				$(this).attr('data-html',true);
+                $(this).attr('data-content',[
+					"<strong>" + src +" to " + dest + " in " + chort.year + "</strong>",
+					chort.valueFormat(d.target.value),
+					"<br><strong>" + dest +" to " + src + " in " + chort.year +"</strong>",
+					chort.valueFormat(d.source.value)
+				  ].join("<br>"));
+                $(this).popover('show');
+                }
 			}) 
 			.on("mouseleave", function (d){
-				$(this).popover("hide");
+			    $(this).popover("hide");
+
 			})
 
 

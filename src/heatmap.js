@@ -3,7 +3,7 @@ class HeatMap{
 		this.container = container;
 		this.itemSize = 19;
         this.cellSize = this.itemSize - 1;
-        this.margin = {top: 0, right: 20, bottom: 20, left: 110};
+        this.margin = {top: 0, right: 20, bottom: 20, left: 160};
           
     	this.width = 2000 - this.margin.right - this.margin.left;
        	this.height = 1000 - this.margin.top - this.margin.bottom;

@@ -99,10 +99,10 @@
 	</style
 </head>
 <body>
-	<div id="map" style="width: 850px; height: 600px; float: left;"></div>
-	<div id="chort" style="width: 650px; height: 650px; float: left;"></div>
-	<script src="project.js"></script>
-	<script src="chort.js"></script>
+	<div id="map" style="width: 55%; height: 600px; float: left;"></div>
+	<div id="chord" style="width: 45%; height: 650px; float: left;"></div>
+	<script src="map.js"></script>
+	<script src="chord.js"></script>
 	<div class="slidecontainer">
 	  <input type="range" min="1960" max="2017" value="1988" class="slider" id="myRange">
 	  <p>Value: <span id="demo"></span></p>
@@ -117,9 +117,9 @@
 		var slider = document.getElementById("myRange");
 		var output = document.getElementById("demo");
 		output.innerHTML = slider.value;
-		var container = d3.select('#chort');
-    	var chort = new Chort(container, slider.value+"");
-    	chort.setYear(slider.value+"");
+		var container = d3.select('#chord');
+    	var chord = new Chord(container, (slider.value+""));
+    	chord.setYear((slider.value+""));
 		
 		var map = new Map(slider.value);
     	
@@ -178,7 +178,7 @@
 		var origin = 'SY';
 		
 		window.setInterval(function(){
-		  	if(chort.year!= (slider.value+""))chort.setYear(slider.value+"");
+		  	if(chord.year!= (slider.value+""))chord.setYear(slider.value+"");
 			if(map.year!= (slider.value+"")) map.setYear(slider.value+"");
 			if(!(map.origin=='!'||map.origin==origin)) {
 				origin = map.origin;
