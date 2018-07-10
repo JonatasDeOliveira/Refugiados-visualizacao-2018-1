@@ -4,12 +4,12 @@
 	<meta charset="UTF-8">
 	<script src="js/d3.v4.min.js"></script>
 	<link rel="stylesheet" href="css/leaflet.css">
+	<!--<link rel="stylesheet" href="css/bootstrap.css">-->
    	<link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/project.css" rel="stylesheet">
    	<script src="js/leaflet.js"></script>
     <script src='js/leaflet-arc.min.js'></script>
 	<script src="js/esri-leaflet.js"></script>
-	<link rel="stylesheet" href="css/bootstrap.css">
     <script src="js/jquery.min.js"></script>
     <script src="js/tether.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
@@ -22,7 +22,6 @@
 
     <!-- also load 3rd-party CSV parsing libary just for this demo  -->
     <script src="js/papaparse.min.js"></script>
-	
 
 </head>
 <body>
@@ -35,7 +34,7 @@
 		        <a class="nav-link" href="index.html">Home <span class="sr-only">(current)</span></a>
 		      </li>
 		      <li class="nav-item">
-		        <a class="nav-link" href="visual.html">Visualization</a>
+		        <a class="nav-link btn btn-secondary active" href="visual.html">Visualization</a>
 		      </li>
 		      <li class="nav-item">
 		        <a class="nav-link" href="aboutus.html">About us</a>
@@ -46,7 +45,7 @@
 	</header>
     
 	<main role="main">
-		<div style='margin-top: 30px; margin-left: 30px; margin-right: 30px'>
+		<div style='margin-top: 100px; margin-left: 30px; margin-right: 30px'>
 			<div id="map" style="width: 55%; height: 600px; float: left;"></div>
 			<div id="chord" style="width: 45%; height: 650px; float: left;"></div>
 			<script src="map.js"></script>
