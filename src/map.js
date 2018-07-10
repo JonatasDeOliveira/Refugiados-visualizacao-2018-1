@@ -9,10 +9,25 @@ class Map {
 		} else {
 		  this.map.setView([0, 0], 2);
 		}
-		this.setYear(this.year);
 		this.origin_clicked = undefined;
 		this.flowmap = undefined;
 		this.chord = undefined;
+		this.legend= L.control({position: 'bottomright'});
+
+		this.legend.onAdd = function (map) {
+			this.div = L.DomUtil.create('div', 'info legend');
+			this.labels =['Origin','Asylum'];
+
+			this.div.innerHTML +=
+					'<i style="background:' + 'rgb(195, 255, 62)' + '"></i> ' +
+					'<strong>'+this.labels[0]+'</strong>' + '<br>';
+			this.div.innerHTML +=
+					'<i style="background:' + 'rgb(17, 142, 170)' + '"></i> ' +
+					'<strong>'+this.labels[1]+'</strong>' + '<br>';
+
+			return this.div;
+		};
+		this.setYear(this.year);
 	}
 	
 	setYear(year) {
@@ -22,6 +37,8 @@ class Map {
 		m.map.eachLayer(function (layer) {
 			m.map.removeLayer(layer);
 		});
+		m.map.removeControl(m.legend);
+		m.legend.addTo(m.map);
 		L.esri.basemapLayer('Topographic').addTo(m.map);
 		Papa.parse('datasets/regions_dataset.csv', {
 		  download: true,
