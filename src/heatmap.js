@@ -3,6 +3,7 @@ class HeatMap{
 		this.container = container;
 		this.itemSize = 16;
         this.cellSize = this.itemSize - 1;
+		this.valueFormat = d3.format(",");
         this.margin = {top: 0, right: 20, bottom: 20, left: 180};
           
     	this.width = 2000 - this.margin.right - this.margin.left;
@@ -87,9 +88,12 @@ class HeatMap{
                 return heatmap.colorScale(d[colorScaleColumn]);
             })
             .on("mouseover", function(d){
-			popoverOptions.content = "<strong>" + "Refugees Number: " + d[colorScaleColumn] +"</strong>";
-			$(this).popover(popoverOptions);
-			$(this).popover("show");
+					$(this).attr('data-html',true);
+                    $(this).attr('data-content',[
+					    "<strong>" + d[leftYAxisColumnName] +" to " + d[rightYAxisColumnName] + " in " + d[xAxisColumnName] + "</strong>",
+					    heatmap.valueFormat(d[colorScaleColumn])
+				      ].join("<br>"));
+                    $(this).popover('show');
 		    }) 
 		    .on("mouseleave", function (d){
 			$(this).popover("hide");
