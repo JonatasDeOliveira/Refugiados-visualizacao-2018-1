@@ -217,7 +217,7 @@ class Chord {
 		return matrix;
 		}
 
-		d3.csv("datasets/regions_dataset.csv", type, function (dataForCountries){console.log(dataForCountries);
+		d3.csv("datasets/regions_dataset.csv", type, function (dataForCountries){
 			render(dataForCountries);
 		});
 

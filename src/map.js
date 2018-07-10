@@ -1,5 +1,5 @@
 class Map {
-	constructor(year) {
+	constructor(year, warData) {
 		this.year = year;
 		this.origin = "!";
 		this.lastClicked = true;
@@ -10,10 +10,10 @@ class Map {
 		  this.map.setView([0, 0], 2);
 		}
 		this.origin_clicked = undefined;
+		this.warData = warData;
 		this.flowmap = undefined;
 		this.chord = undefined;
 		this.legend= L.control({position: 'bottomright'});
-
 		this.legend.onAdd = function (map) {
 			this.div = L.DomUtil.create('div', 'info legend');
 			this.labels =['Origin','Asylum'];
@@ -61,7 +61,6 @@ class Map {
 				}
 			  })
 			};
-			console.log(geoJsonFeatureCollection);
 			m.flowmap = L.canvasFlowmapLayer(geoJsonFeatureCollection, {
 			  originAndDestinationFieldIds: {
 				originUniqueIdField: 'origin abbreviation',
@@ -85,6 +84,7 @@ class Map {
 			// it is up to the developer to wire up a click or mouseover listener
 			// and then call the "selectFeaturesForPathDisplay()" method to inform the layer
 			// which Bezier paths need to be drawn
+			var layerPopup;
 			m.flowmap.on('click', function(e) {
 				if(m.lastClicked==false){
 					m.chord.resetChord();
@@ -107,6 +107,23 @@ class Map {
 			  /*if (e.sharedDestinationFeatures.length) {
 				this.flowmap.selectFeaturesForPathDisplay(e.sharedDestinationFeatures, 'SELECTION_NEW');
 			  }*/
+			}).on('mouseover', function(e) {
+				if(m.map) {
+					var reason = "No information";
+					if(m.warData[m.year][e.sharedOriginFeatures[0].properties['origin abbreviation']]!=undefined) {
+						reason = "";
+						m.warData[m.year][e.sharedOriginFeatures[0].properties['origin abbreviation']].forEach(function (c) {
+							reason += c;
+							reason += " | ";
+						});
+					}
+					layerPopup = L.popup().setLatLng([e.sharedOriginFeatures[0].geometry.coordinates[1],e.sharedOriginFeatures[0].geometry.coordinates[0]]).setContent(reason).openOn(m.map);
+				}
+			}).on('mouseout', function(e) {
+				if(layerPopup&&m.map) {
+					m.map.closePopup(layerPopup);
+					layerPopup = null;
+				}
 			});
 			// immediately select an origin point for Bezier path display,
 			// instead of waiting for the first user click event to fire
