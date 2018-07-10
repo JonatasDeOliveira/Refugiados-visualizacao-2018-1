@@ -113,3 +113,7 @@ footer p {
       margin-top: 100px;
       margin-left: 50px;
     }
+
+    .card-link.resize-card {
+      margin-left: 0.50rem;
+    }
