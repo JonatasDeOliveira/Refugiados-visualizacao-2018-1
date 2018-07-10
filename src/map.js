@@ -10,7 +10,9 @@ class Map {
 		  this.map.setView([0, 0], 2);
 		}
 		this.setYear(this.year);
-		
+		this.origin_clicked = undefined;
+		this.flowmap = undefined;
+		this.chord = undefined;
 	}
 	
 	setYear(year) {
@@ -43,7 +45,7 @@ class Map {
 			  })
 			};
 			console.log(geoJsonFeatureCollection);
-			var oneToManyFlowmapLayer = L.canvasFlowmapLayer(geoJsonFeatureCollection, {
+			m.flowmap = L.canvasFlowmapLayer(geoJsonFeatureCollection, {
 			  originAndDestinationFieldIds: {
 				originUniqueIdField: 'origin abbreviation',
 				originGeometry: {
@@ -66,21 +68,42 @@ class Map {
 			// it is up to the developer to wire up a click or mouseover listener
 			// and then call the "selectFeaturesForPathDisplay()" method to inform the layer
 			// which Bezier paths need to be drawn
-			oneToManyFlowmapLayer.on('click', function(e) {
+			m.flowmap.on('click', function(e) {
+				if(m.lastClicked==false){
+					m.chord.resetChord();
+				}
+				
 				m.origin = e.sharedOriginFeatures[0].properties['origin abbreviation'];
+
 				m.lastClicked = true;
-			  if (e.sharedOriginFeatures.length) {
-				oneToManyFlowmapLayer.selectFeaturesForPathDisplay(e.sharedOriginFeatures, 'SELECTION_NEW');
-			  }
+
+				var selection_mode = 'SELECTION_NEW';
+				if(m.origin_clicked == e.sharedOriginFeatures[0].properties['origin abbreviation']){
+					var selection_mode = 'SELECTION_SUBTRACT';
+					m.origin_clicked = undefined;
+				}else{
+					m.origin_clicked = e.sharedOriginFeatures[0].properties['origin abbreviation'];
+				}
+			  	if (e.sharedOriginFeatures.length) {
+					m.flowmap.selectFeaturesForPathDisplay(e.sharedOriginFeatures, selection_mode);
+				}
 			  /*if (e.sharedDestinationFeatures.length) {
-				oneToManyFlowmapLayer.selectFeaturesForPathDisplay(e.sharedDestinationFeatures, 'SELECTION_NEW');
+				this.flowmap.selectFeaturesForPathDisplay(e.sharedDestinationFeatures, 'SELECTION_NEW');
 			  }*/
 			});
 			// immediately select an origin point for Bezier path display,
 			// instead of waiting for the first user click event to fire
-			//oneToManyFlowmapLayer.selectFeaturesForPathDisplayById('origin abbreviation', 'US', true, 'SELECTION_NEW');
+			//this.flowmap.selectFeaturesForPathDisplayById('origin abbreviation', 'US', true, 'SELECTION_NEW');
 		  }
 		});
+	}
+
+	clearMap(){
+		this.flowmap.clearAllPathSelections();
+	}
+
+	setChord(chord){
+		this.chord = chord;
 	}
 }
 

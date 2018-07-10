@@ -1,6 +1,7 @@
 class Chord {
 	
-	constructor(container, year) {
+	constructor(container, year, map) {
+		this.map = map;
 		this.year = year;
 		this.container = container;
 		this.cond = true;
@@ -153,6 +154,7 @@ class Chord {
 		selection
 		  .on("click", function (group){
 			if(chort.cond) {
+				chort.map.clearMap();
 			    chort.lastClicked = true;
 				chort.cond = false;
 				chort.g.selectAll(".ribbon")
@@ -255,5 +257,12 @@ class Chord {
 		});
 
 		}
+	}
+
+	resetChord(){
+		this.cond = true;
+		this.g.selectAll(".ribbon")
+		.transition().duration(this.transitionDuration)
+		.style("opacity", this.opacity);
 	}
 }

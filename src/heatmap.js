@@ -1,14 +1,14 @@
 class HeatMap{
 	constructor(container){
 		this.container = container;
-		this.itemSize = 19;
+		this.itemSize = 16;
         this.cellSize = this.itemSize - 1;
-        this.margin = {top: 0, right: 20, bottom: 20, left: 160};
+        this.margin = {top: 0, right: 20, bottom: 20, left: 180};
           
     	this.width = 2000 - this.margin.right - this.margin.left;
        	this.height = 1000 - this.margin.top - this.margin.bottom;
 
-       	this.canvas = container.attr("width", this.width + this.margin.left + this.margin.right)
+       	this.canvas = this.container.attr("width", this.width)
         	.attr("height", this.height + this.margin.top + this.margin.bottom)
          	.append("g")
             .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
@@ -36,6 +36,7 @@ class HeatMap{
         this.rightYScale = undefined;
         this.xScale = undefined;
         this.rightIds = undefined;
+        this.leftValue = undefined;
         this.rowLength = 0;
         this.columnLength = 0;
 
@@ -56,7 +57,7 @@ class HeatMap{
 		
 		this.container
 		.attr("width", (this.rowLength * this.itemSize) + 110*3)
-		.attr("height", (this.columnLength * this.itemSize) + 110*2);
+		.attr("height", (this.columnLength * this.itemSize) + 110);
 
 		var cells = this.canvas.selectAll(".block");
 		cells.remove(); //.exit().remove() não está funcionando
@@ -139,12 +140,12 @@ class HeatMap{
 
 	setLeftYAxis(columnName){
 		var elements = d3.set(this.currData.map(function( item ) { return item[columnName]; } )).values().sort();
+        this.leftValue = elements[0];
 		
 		this.leftYScale = d3.scaleBand()
             .domain(this.rightIds)
             .range([0, this.columnLength * this.itemSize]);
             
-            console.log(elements);
 
         this.leftYAxis = d3.axisLeft()
             .scale(this.leftYScale)
