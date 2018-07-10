@@ -61,16 +61,27 @@
 		    <script src="js/crossfilter.min.js"></script>
 		    <script src="heatmap.js"></script>
 			<script>
+			d3.csv('datasets/war_dataset.csv', function ( response3 ) {
 				var slider = document.getElementById("myRange");
 				var output = document.getElementById("demo");
 				output.innerHTML = slider.value;
 				var lastClick = "map";
-				var map = new Map(slider.value);
+				var dict = {};
+				response3.forEach(function (d){
+					if(dict[d['year']]==undefined) {
+						dict[d['year']] = {};
+					}
+					if(dict[d['year']][d['country_abbr']]==undefined) {
+						dict[d['year']][d['country_abbr']] = [];
+					}
+					dict[d['year']][d['country_abbr']].push(d['war_name']);
+				});
+				console.log(dict);
+				var map = new Map(slider.value+"", dict);
 				map.setYear(slider.value+"");
 				var container = d3.select('#chord');
 		    	var chord = new Chord(container, (slider.value+""), map);
 		    	chord.setYear((slider.value+""));
-
 		    	map.setChord(chord);
 		    	
 				slider.oninput = function() {
@@ -154,6 +165,7 @@
 				});
 
 		      });
+		});
 		    </script>
 		</div>
 	</main>

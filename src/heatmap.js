@@ -54,7 +54,6 @@ class HeatMap{
 		this.setLeftYAxis(leftYAxisColumnName);
 		this.setColorScale(colors, colorScaleColumn);
 
-		console.log(this.currData);
 		
 		this.container
 		.attr("width", (this.rowLength * this.itemSize) + 110*3)
@@ -99,7 +98,6 @@ class HeatMap{
 			$(this).popover("hide");
 		});
 
-        console.log(this.columnLength);
         d3.select(".rightAxis")
             .attr("transform", "translate(" + (this.rowLength * this.itemSize) + "," + 0 + ")")
             .call(this.rightYAxis)
